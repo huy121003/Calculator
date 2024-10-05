@@ -1,52 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { create, all } from 'mathjs';
-
-const math = create(all);
+// Calculator.js
+import React from 'react';
+import { useCalculator } from './useCalculator';
 
 const Calculator = () => {
-  const [display, setDisplay] = useState('');
-  const [history, setHistory] = useState(() => {
-    const savedHistory = localStorage.getItem('history');
-    return savedHistory ? JSON.parse(savedHistory) : [];
-  });
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem('darkMode');
-    return savedTheme ? JSON.parse(savedTheme) : false;
-  });
-
-  const appendToDisplay = (value) => {
-    setDisplay((prev) => prev + value);
-  };
-
-  const clearDisplay = () => setDisplay('');
-  
-  const deleteLastChar = () => {
-    setDisplay((prev) => prev.slice(0, -1));
-  };
-
-  const calculate = () => {
-    try {
-      let expression = display.replace(/×/g, '*').replace(/x/g, '*');
-
-     
-      const result = math.evaluate(expression).toString();
-      const newHistory = [...history, { expression: display, result }];
-      setHistory(newHistory);
-      setDisplay(result);
-      localStorage.setItem('history', JSON.stringify(newHistory)); // Lưu lịch sử vào localStorage
-    } catch {
-      setDisplay('Error');
-    }
-  };
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDarkMode);
-    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
-  }, [isDarkMode]);
+  const {
+    display,
+    history,
+    isDarkMode,
+    appendToDisplay,
+    clearDisplay,
+    deleteLastChar,
+    calculate,
+    toggleTheme,
+  } = useCalculator();
 
   return (
     <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-r from-pink-400 to-yellow-300'}`}>
@@ -76,8 +42,6 @@ const Calculator = () => {
           <button onClick={() => appendToDisplay('0')} className="col-span-2 btn bg-blue-400 text-white hover:bg-blue-500 transition duration-300 p-4 rounded-md">0</button>
           <button onClick={() => appendToDisplay('.')} className="btn bg-blue-400 text-white hover:bg-blue-500 transition duration-300 p-4 rounded-md">.</button>
           <button onClick={calculate} className="btn bg-teal-500 text-white hover:bg-teal-600 transition duration-300 p-4 rounded-md">=</button>
-
-        
         </div>
 
         {/* Lịch sử tính toán */}
